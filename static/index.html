@@ -1,0 +1,93 @@
+<html>
+<head>
+	<title>Ed25519 Test Page</title>
+	<script src="/js/jquery.js"></script>
+</head>
+<body>
+<h1>Ed25519 Test Page</h1>
+<br/>
+Seed: (Will be hashed with sha256 to create a seed for key generation)<br/>
+<input name="seed" id="seed" size="80" /><br/>
+<button name="genKeyFromSeed" onclick="genKeyFromSeed();">Generate key pair from seed</button>
+<button name="genKey" onclick="genKey();">Generate key pair from random</button><br/>
+Private Key:<br/>
+<input name="privateKey" id="privateKey" size="80" /><br/>
+Public Key:<br/>
+<input name="publicKey" id="publicKey" size="80" /><br/>
+<br/>
+Message: (Text to be signed or verified)<br/>
+<input name="message" id="message" size="80" /><br/>
+Signature:<br/>
+<input name="signature" id="signature" size="80" /><br/>
+<button name="sign" onclick="sign();">Sign</button>
+<button name="verify" onclick="verify();">Verify</button><br/>
+<span id='status'>Message</span>
+<script>
+var showError = function (message) {
+	$('#status').text(message);
+}
+var verify = function () {
+	var postData = {
+		message: $('#message').val(),
+		signature: $('#signature').val(),
+		publicKey: $('#publicKey').val()
+	};
+	$.ajax({
+		dataType: 'JSON',
+		url: '/api/Verify',
+		data: postData,
+		method: 'POST'
+	}).done(function (data) {
+		if (data) {
+			if (data.error) showError(data.error);
+			if (data.result) $('#status').text('Valid');
+			else $('#status').text('Invalid');
+		}
+	});
+}
+var sign = function () {
+	var postData = {
+		privateKey: $('#privateKey').val(),
+		message: $('#message').val()
+	};
+	$.ajax({
+		dataType: 'JSON',
+		url: '/api/Sign',
+		data: postData,
+		method: 'POST'
+	}).done(function (data) {
+		if (data) {
+			if (data.error) showError(data.error);
+			if (data.signature) $('#signature').val(data.signature);
+		}
+	});
+}
+var genKeyFromSeed = function () {
+	var postData = {
+		seed: $('#seed').val()
+	};
+	$.ajax({
+		dataType:'JSON',
+		url: '/api/GenKey',
+		data: postData,
+		method: 'POST'
+	}).done(function (data) {
+		if (data) {
+			if (data.error) showError(data.error);
+			if (data.privateKey) $('#privateKey').val(data.privateKey);
+			if (data.publicKey) $('#publicKey').val(data.publicKey);
+		}
+	});
+}
+var genKey = function () {
+	$.getJSON('/api/GenKey', function (data) {
+		if (data) {
+			if (data.privateKey) $('#privateKey').val(data.privateKey);
+			if (data.publicKey) $('#publicKey').val(data.publicKey);
+		}
+	});
+}
+
+</script>
+</body>
+</html>

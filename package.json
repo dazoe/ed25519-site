@@ -1,0 +1,15 @@
+{
+  "name": "ed25519-site",
+  "version": "0.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "BSD-2-Clause",
+  "dependencies": {
+    "ed25519": "https://github.com/dazoe/ed25519/tarball/master",
+    "connect": "~2.9.0"
+  }
+}
